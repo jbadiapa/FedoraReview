@@ -13,7 +13,7 @@ Source0:        http://timlau.fedorapeople.org/files/test/review-test/%{name}-%{
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
-BuildRequires:  python-devel python-setuptools
+BuildRequires:  python2-devel python-setuptools
 
 %description
 A test package containing a test python module

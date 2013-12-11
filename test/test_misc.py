@@ -52,7 +52,7 @@ from FedoraReview.review_helper import ReviewHelper
 from FedoraReview.source import Source
 from FedoraReview.spec_file import SpecFile
 from FedoraReview.rpm_file import RpmFile
-from FedoraReview.srpm_file import SRPMFile
+#from FedoraReview.srpm_file import SRPMFile
 
 from fr_testcase import FR_TestCase, FAST_TEST, NO_NET, VERSION, RELEASE
 
@@ -404,7 +404,7 @@ class TestMisc(FR_TestCase):
         ''' Test review_helper error handling. '''
         # pylint: disable=C0111,W0212
 
-        class Null:
+        class Null(object):
             def write(self, msg):
                 pass
 
@@ -460,33 +460,33 @@ class TestMisc(FR_TestCase):
         len2 = len(glob.glob(os.path.join(wdir, "*")))
         self.assertEqual(len2, len1)
 
-    @unittest.skipIf(FAST_TEST, 'slow test disabled by REVIEW_FAST_TEST')
-    def test_mock_uniqueext(self):
-        ''' Test --uniqueext option. '''
-        loglevel = os.environ['REVIEW_LOGLEVEL']
-        os.environ['REVIEW_LOGLEVEL'] = 'ERROR'
-        self.init_test('mock-uniqueext',
-                       argv=['-cn', 'python-test'],
-                       options='--uniqueext=hugo')
-        os.environ['REVIEW_LOGLEVEL'] = loglevel
-        bug = NameBug('python-test')
-        bug.find_urls()
-        bug.download_files()
-        checks = Checks(bug.spec_file, bug.srpm_file)
-        Mock.init()
-        for dirt in glob.glob('results/*.*'):
-            os.unlink(dirt)
-        check = checks.checkdict['CheckBuild']
-        check.run()
-        self.assertTrue(check.is_passed)
-        results = glob.glob('results/*.rpm')
-        self.assertEqual(len(results), 2)
-        for dirt in glob.glob('results/*.*'):
-            os.unlink(dirt)
+    #@unittest.skipIf(FAST_TEST, 'slow test disabled by REVIEW_FAST_TEST')
+    #def test_mock_uniqueext(self):
+    #    ''' Test --uniqueext option. '''
+    #    loglevel = os.environ['REVIEW_LOGLEVEL']
+    #    os.environ['REVIEW_LOGLEVEL'] = 'ERROR'
+    #    self.init_test('mock-uniqueext',
+    #                   argv=['-cn', 'python-test'],
+    #                   options='--uniqueext=hugo')
+    #    os.environ['REVIEW_LOGLEVEL'] = loglevel
+    #    bug = NameBug('python-test')
+    #    bug.find_urls()
+    #    bug.download_files()
+    #    checks = Checks(bug.spec_file, bug.srpm_file)
+    #    Mock.init()
+    #    for dirt in glob.glob('results/*.*'):
+    #        os.unlink(dirt)
+    #    check = checks.checkdict['CheckBuild']
+    #    check.run()
+    #    self.assertTrue(check.is_passed)
+    #    results = glob.glob('results/*.rpm')
+    #    self.assertEqual(len(results), 2)
+    #    for dirt in glob.glob('results/*.*'):
+    #        os.unlink(dirt)
 
     def test_java_spec(self):
         ''' Test the ChecktestSkip check. '''
-        # pylint: disable=F0401,R0201,C0111
+        # pylint: disable=F0401,R0201,C0111,W0613
 
         from plugins.java import CheckJavaPlugin
 
@@ -575,24 +575,24 @@ class TestMisc(FR_TestCase):
         else:
             self.assertTrue(False)
 
-    @unittest.skipIf(FAST_TEST, 'slow test disabled by REVIEW_FAST_TEST')
-    def test_mockbuild(self):
-        """ Test the SRPMFile class """
-        self.init_test('mockbuild', argv=['-rn', 'python-test'])
-        srpm = SRPMFile(self.srpm_file)
-        # install the srpm
-        srpm.unpack()
-        self.assertTrue(srpm._unpacked_src is not None)
-        src_dir = srpm._unpacked_src
-        src_files = glob.glob(os.path.expanduser(src_dir) + '/*')
-        src_files = [os.path.basename(f) for f in src_files]
-        self.assertTrue('python-test-1.0.tar.gz' in src_files)
-        self.log.info("Starting mock build (patience...)")
-        Mock.clear_builddir()
-        Mock.build(srpm.filename)
-        rpms = glob.glob(os.path.join(Mock.resultdir,
-                                      'python-test-1.0-1*noarch.rpm'))
-        self.assertEqual(1, len(rpms))
+    #@unittest.skipIf(FAST_TEST, 'slow test disabled by REVIEW_FAST_TEST')
+    #def test_mockbuild(self):
+    #    """ Test the SRPMFile class """
+    #    self.init_test('mockbuild', argv=['-rn', 'python-test'])
+    #    srpm = SRPMFile(self.srpm_file)
+    #    # install the srpm
+    #    srpm.unpack()
+    #    self.assertTrue(srpm._unpacked_src is not None)
+    #    src_dir = srpm._unpacked_src
+    #    src_files = glob.glob(os.path.expanduser(src_dir) + '/*')
+    #    src_files = [os.path.basename(f) for f in src_files]
+    #    self.assertTrue('python-test-1.0.tar.gz' in src_files)
+    #    self.log.info("Starting mock build (patience...)")
+    #    Mock.clear_builddir()
+    #    Mock.build(srpm.filename)
+    #    rpms = glob.glob(os.path.join(Mock.resultdir,
+    #                                  'python-test-1.0-1*noarch.rpm'))
+    #    self.assertEqual(1, len(rpms))
 
     def test_checksum_command_line(self):
         ''' Default checksum test. '''
