@@ -38,8 +38,7 @@ DEPLIST_OK = set(["bash",
                   "python-bugzilla",
                   "python-kitchen",
                   "python-straight-plugin",
-                  "rpm-python",
-                  "rpmdevtools"])
+                  "rpm-python"])
 
 
 DIRLIST_OK = set(["/usr/share/doc/ruby-racc-1.4.5",
@@ -58,8 +57,9 @@ class TestDeps(unittest.TestCase):
     def test_list_deps(self):
         ''' Test listing of package deps. '''
         deplist = deps.list_deps('fedora-review')
-        if 'yum-utils' in deplist:              # F18-> F19 changes.
-            deplist.remove('yum-utils')
+        for dep in ['yum-utils', 'rpmdevtools', 'devscripts-minimal']:
+            if dep in deplist:
+                deplist.remove(dep)             # F18-> F19 -> F20 changes
         self.assertEqual(set(deplist), DEPLIST_OK)
 
     @unittest.skipIf(not FEDORA, 'Fedora-only test')
