@@ -325,6 +325,13 @@ class _Mock(HelpersMixin):
         for pkg in spec.packages:
             nvr = spec.get_package_nvr(pkg)
             result.append(self.get_package_rpm_path(nvr))
+        try:
+            nvr = spec.get_package_nvr('%s-debuginfo' % spec.name)
+            dirpm = self.get_package_rpm_path(nvr)
+            result.append(dirpm)
+        except ReviewError:
+            # debuginfo does not have to exist
+            pass
         if with_srpm:
             result.append(get_package_srpm_path(spec))
         return result
